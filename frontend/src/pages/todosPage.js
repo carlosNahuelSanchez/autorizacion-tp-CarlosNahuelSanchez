@@ -1,3 +1,5 @@
+import { addTodos, deleteTodos } from "../API/todosAPI";
+
 export const todosPage = () => {
   const container = document.createElement("div");
 
@@ -32,6 +34,31 @@ export const todosPage = () => {
   title.classList.add("text-3xl", "font-bold", "mb-4");
   title.textContent = "List of Todos";
 
+  const formAddTodo = document.createElement("form")
+  formAddTodo.classList.add("my-3")
+
+  const inputNameAdd = document.createElement("input")
+  inputNameAdd.setAttribute("placeholder","Nombre")
+  inputNameAdd.setAttribute("id","todoName")
+  inputNameAdd.classList.add("px-4","py-2","rounded")
+
+  const inputStateAdd = document.createElement("input")
+  inputStateAdd.setAttribute("type","checkbox")
+  inputStateAdd.setAttribute("id","todoState")
+  inputStateAdd.classList.add("w-4","h-4","mx-2")
+
+  const buttonAdd = document.createElement("button")
+  buttonAdd.classList.add("bg-green-500","px-3","py-2","text-white","rounded")
+  buttonAdd.textContent = "Agregar"
+
+  formAddTodo.appendChild(inputNameAdd)
+  formAddTodo.appendChild(inputStateAdd)
+  formAddTodo.appendChild(buttonAdd)
+
+  buttonAdd.addEventListener("click" , (e) => {
+    addTodos(e)
+})
+
   const table = document.createElement("table");
 
   table.classList.add(
@@ -60,10 +87,15 @@ export const todosPage = () => {
   th4.classList.add("border", "px-4", "py-2");
   th4.textContent = "Owner Id";
 
+  const th5 = document.createElement("th");
+  th5.classList.add("border", "px-4", "py-2");
+  th5.textContent = "Manage";
+
   tr.appendChild(th1);
   tr.appendChild(th2);
   tr.appendChild(th3);
   tr.appendChild(th4);
+  tr.appendChild(th5)
 
   thead.appendChild(tr);
 
@@ -74,8 +106,6 @@ export const todosPage = () => {
   table.appendChild(tbody);
 
   container.appendChild(btnHome);
-
-  container.innerHTML = "<h1>LOOOL</h1>"
 
   fetch("http://localhost:4000/todos",{
     credentials:"include"
@@ -103,16 +133,36 @@ export const todosPage = () => {
         td4.classList.add("border", "px-4", "py-2");
         td4.textContent = todo.owner;
 
+        const td5 = document.createElement("td");
+        td5.classList.add("border", "px-4", "py-2");
+
+        const deleteButton = document.createElement("button");
+        deleteButton.classList.add("border","rounded","px-4","py-2", "bg-red-500", "text-white")
+        deleteButton.textContent = "Eliminar"
+        td5.appendChild(deleteButton)
+        deleteButton.addEventListener("click" , () => {
+            deleteTodos(todo.id)
+            tr.remove();
+        })
+
+        const updateButton = document.createElement("button");
+        updateButton.classList.add("border","rounded","px-4","py-2","bg-gray-500", "text-white")
+        updateButton.textContent = "Actualizar"
+        td5.appendChild(updateButton)
+
         tr.appendChild(td1);
         tr.appendChild(td2);
         tr.appendChild(td3);
         tr.appendChild(td4);
+        tr.appendChild(td5)
         tbody.appendChild(tr);
       });
     });
 
   container.appendChild(title);
+  container.appendChild(formAddTodo)
   container.appendChild(table);
 
   return container;
 };
+

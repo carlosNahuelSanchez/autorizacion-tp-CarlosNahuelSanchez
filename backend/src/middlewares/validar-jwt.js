@@ -24,6 +24,8 @@ export default (req, res, next) => {
   }
 
   req.user = user; // Agrega la información del usuario decodificada al request
+  console.log(user)
 
   next();
+
 };
