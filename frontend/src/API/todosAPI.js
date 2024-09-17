@@ -10,9 +10,7 @@ export const deleteTodos = (id) => {
     }
 }
 
-export const addTodos = (e) => {
-
-    e.preventDefault();
+export const addTodos = () => {
 
     const todoName = document.getElementById("todoName").value.trim()
 
@@ -36,3 +34,28 @@ export const addTodos = (e) => {
     }
     
 } 
+
+export const updateTodos = (id) => {
+
+    const todoNewName = document.getElementById("todoNewName").value.trim()
+
+    const todoNewState = document.getElementById("todoNewState").checked
+
+    if (!todoNewName) {
+        return alert("Completa el nombre")
+    }
+
+    try {
+        return fetch("http://localhost:4000/todos"+`/${id}`,{
+            method:"PUT",
+            credentials: "include",
+            body: JSON.stringify({todoNewName,todoNewState}),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        },
+    )
+    } catch (error) {
+        console.error("Error al actualizar tarea", error)
+    }
+}

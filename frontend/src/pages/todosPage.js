@@ -1,4 +1,4 @@
-import { addTodos, deleteTodos } from "../API/todosAPI";
+import { addTodos, deleteTodos, updateTodos } from "../API/todosAPI";
 
 export const todosPage = () => {
   const container = document.createElement("div");
@@ -38,25 +38,25 @@ export const todosPage = () => {
   formAddTodo.classList.add("my-3")
 
   const inputNameAdd = document.createElement("input")
-  inputNameAdd.setAttribute("placeholder","Nombre")
-  inputNameAdd.setAttribute("id","todoName")
-  inputNameAdd.classList.add("px-4","py-2","rounded")
+  inputNameAdd.setAttribute("placeholder", "Nombre")
+  inputNameAdd.setAttribute("id", "todoName")
+  inputNameAdd.classList.add("px-4", "py-2", "rounded")
 
   const inputStateAdd = document.createElement("input")
-  inputStateAdd.setAttribute("type","checkbox")
-  inputStateAdd.setAttribute("id","todoState")
-  inputStateAdd.classList.add("w-4","h-4","mx-2")
+  inputStateAdd.setAttribute("type", "checkbox")
+  inputStateAdd.setAttribute("id", "todoState")
+  inputStateAdd.classList.add("w-4", "h-4", "mx-2")
 
   const buttonAdd = document.createElement("button")
-  buttonAdd.classList.add("bg-green-500","px-3","py-2","text-white","rounded")
+  buttonAdd.classList.add("bg-green-500", "px-3", "py-2", "text-white", "rounded")
   buttonAdd.textContent = "Agregar"
 
   formAddTodo.appendChild(inputNameAdd)
   formAddTodo.appendChild(inputStateAdd)
   formAddTodo.appendChild(buttonAdd)
 
-  buttonAdd.addEventListener("click" , (e) => {
-    addTodos(e)
+  buttonAdd.addEventListener("click", () => {
+    addTodos()
 })
 
   const table = document.createElement("table");
@@ -107,13 +107,12 @@ export const todosPage = () => {
 
   container.appendChild(btnHome);
 
-  fetch("http://localhost:4000/todos",{
-    credentials:"include"
+  fetch("http://localhost:4000/todos", {
+    credentials: "include"
   })
     .then((response) => response.json())
     .then((data) => {
       data.todos.forEach((todo) => {
-        if (todo.id > 10) return;
 
         const tr = document.createElement("tr");
 
@@ -137,18 +136,59 @@ export const todosPage = () => {
         td5.classList.add("border", "px-4", "py-2");
 
         const deleteButton = document.createElement("button");
-        deleteButton.classList.add("border","rounded","px-4","py-2", "bg-red-500", "text-white")
+        deleteButton.classList.add("border", "rounded", "px-4", "py-2", "bg-red-500", "text-white")
         deleteButton.textContent = "Eliminar"
         td5.appendChild(deleteButton)
-        deleteButton.addEventListener("click" , () => {
-            deleteTodos(todo.id)
-            tr.remove();
+        deleteButton.addEventListener("click", () => {
+          deleteTodos(todo.id)
+          tr.remove();
         })
 
         const updateButton = document.createElement("button");
-        updateButton.classList.add("border","rounded","px-4","py-2","bg-gray-500", "text-white")
+        updateButton.classList.add("border", "rounded", "px-4", "py-2", "bg-gray-500", "text-white")
         updateButton.textContent = "Actualizar"
         td5.appendChild(updateButton)
+        updateButton.addEventListener("click", () => {
+          const idTodo = todo.id
+          const modal = document.createElement("div")
+          modal.classList.add("fixed", "inset-0", "bg-gray-900", "bg-opacity-20", "flex", "items-center", "justify-center", "z-50")
+
+          const formUpdateTodo = document.createElement("form")
+          formUpdateTodo.classList.add("bg-slate-200", "p-5", "rounded")
+
+          const inputNameUpdate = document.createElement("input")
+          inputNameUpdate.setAttribute("placeholder", "Nombre")
+          inputNameUpdate.setAttribute("id", "todoNewName")
+          inputNameUpdate.classList.add("px-4", "py-2", "rounded")
+
+          const inputStateUpdate = document.createElement("input")
+          inputStateUpdate.setAttribute("type", "checkbox")
+          inputStateUpdate.setAttribute("id", "todoNewState")
+          inputStateUpdate.classList.add("w-4", "h-4", "mx-2")
+
+          const buttonConfirmUpdate = document.createElement("button")
+          buttonConfirmUpdate.classList.add("bg-green-500", "px-3", "py-2", "text-white", "rounded", "mx-2")
+          buttonConfirmUpdate.textContent = "Actualizar"
+          buttonConfirmUpdate.addEventListener("click", () => {
+            updateTodos(idTodo)
+          })
+
+          const buttonCloseUpdate = document.createElement("button")
+          buttonCloseUpdate.classList.add("bg-red-500", "px-3", "py-2", "text-white", "rounded")
+          buttonCloseUpdate.textContent = "Cerrar"
+          buttonCloseUpdate.addEventListener("click", () => {
+            container.removeChild(modal)
+          })
+
+          formUpdateTodo.appendChild(inputNameUpdate)
+          formUpdateTodo.appendChild(inputStateUpdate)
+          formUpdateTodo.appendChild(buttonConfirmUpdate)
+          formUpdateTodo.appendChild(buttonCloseUpdate)
+
+          modal.appendChild(formUpdateTodo)
+
+          container.appendChild(modal)
+        })
 
         tr.appendChild(td1);
         tr.appendChild(td2);
