@@ -15,6 +15,7 @@ export const deleteTodosCtrl = (req,res) => {
   try {
     const id = +req.params.id
     todosDB = todosDB.filter((tarea)=> tarea.id != id)
+    res.status(200).json({message:"Tarea eliminada"})
   } catch (error) {
     console.error("No se puedo eliminar",error)
   }
@@ -32,11 +33,34 @@ export const AddTodoCtrl = (req,res) => {
       owner: req.user.id
     }
 
-    console.log(newTodo)
-
     todosDB.push(newTodo)
+
+    res.status(201).json({message:"Tarea agregada"})
 
   } catch (error) {
     console.log("No se pudo eliminar tarea", error)
   }
+}
+
+export const updateTodoCtrl = (req,res) => {
+
+  const {todoNewName,todoNewState} = req.body
+
+  const id = +req.params.id
+
+  const newTodoUpdate = {
+      id: id,
+      title: todoNewName,
+      completed: todoNewState,
+      owner: req.user.id
+  }
+
+
+  console.log(newTodoUpdate);
+
+  const index = todosDB.findIndex((tarea) => tarea.id === id);
+
+  todosDB.splice(index,1,newTodoUpdate)
+
+  res.status(200).json({message:"Tarea actualizada"})
 }
